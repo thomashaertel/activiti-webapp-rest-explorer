@@ -197,11 +197,11 @@
 		</dependency>
 
 		<!-- Activiti Addons -->
-		<dependency>
+		<!-- dependency>
 			<groupId>com.github.thomashaertel</groupId>
 			<artifactId>activiti-custom-form-fields</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+		</dependency-->
 
 		<!-- Database -->
 		<dependency>
