@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0" metadata-complete="true">
+	
+	<display-name>Activiti Explorer V2 with ReST API</display-name>
+    <distributable />
+    
+	<context-param>
+		<description>Vaadin production mode</description>
+		<param-name>productionMode</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+	<!-- BEGIN ReST Service -->
+	<!--
+     Remove classpath scanning (from servlet 3.0) in order to speed jetty startup :
+     metadata-complete="true" above + empty absolute ordering below
+     -->
+    <absolute-ordering>
+      <!--
+        Empty absolute ordering is necessary to completely deactivate classpath scanning
+      -->
+    </absolute-ordering>
+    <!-- END ReST Service -->
+
+	<!-- To load the Spring context -->
+	<listener>
+		<listener-class>org.activiti.explorer.servlet.WebConfigurer</listener-class>
+	</listener>
+
+	<!-- To allow session-scoped beans in Spring -->
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+
+	<!-- BEGIN ReST Service -->
+	<!-- All the Servlets and Filters are configured by this ServletContextListener : -->
+    <listener>
+        <listener-class>org.activiti.rest.servlet.WebConfigurer</listener-class>
+    </listener>
+	<!-- END ReST Service -->
+	
+	<filter>
+		<filter-name>UIFilter</filter-name>
+		<filter-class>org.activiti.explorer.filter.ExplorerFilter</filter-class>
+	</filter>
+  
+    <filter>
+        <filter-name>JSONPFilter</filter-name>
+        <filter-class>org.activiti.explorer.servlet.JsonpCallbackFilter</filter-class>
+    </filter>
+
+	<filter-mapping>
+		<filter-name>UIFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+  
+    <filter-mapping>
+        <filter-name>JSONPFilter</filter-name>
+        <url-pattern>/service/*</url-pattern>
+    </filter-mapping>
+
+	<servlet>
+		<servlet-name>Vaadin Application Servlet</servlet-name>
+		<servlet-class>org.activiti.explorer.servlet.ExplorerApplicationServlet</servlet-class>
+		<init-param>
+			<param-name>widgetset</param-name>
+			<param-value>org.activiti.explorer.CustomWidgetset</param-value>
+		</init-param>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Vaadin Application Servlet</servlet-name>
+		<url-pattern>/ui/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>Vaadin Application Servlet</servlet-name>
+		<url-pattern>/VAADIN/*</url-pattern>
+	</servlet-mapping>
+
+	<!-- Session timeout on one day -->
+	<session-config>
+		<session-timeout>480</session-timeout>
+	</session-config>
+</web-app>
